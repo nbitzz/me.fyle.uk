@@ -39,11 +39,14 @@ Bun.serve({
         const neofetch_output = (await exec_promise(isMobile ? "pfetch" : "fastfetch --logo-type sixel")).stdout
         console.log(neofetch_output)
 
-        return new Response(
+        let res = new Response(
             // can't think of / too lazy to find any other way of doing this
             // without like importing an entire virtual dom
             cachedFile.replace(/<slot\/>/g, neofetch_output)
         )
+        
+        res.headers.set("content-type","text/html")
+        return res
 
     }
 } as Serve /* bun won't accept this for some reason if i don't do as Serve */)
