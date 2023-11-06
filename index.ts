@@ -21,7 +21,7 @@ const customParams = {
     "Fediverse": "<a href=\"https://coolviruses.download/@split\">@split@coolviruses.download</a>"
 }
 
-async function fakefetch() {
+async function fakefetch(attachLogo:boolean=false) {
     const boundary = "=="
 
     // not doing Object.fromEntries() here cause i'd do Object.entries() later anyway
@@ -39,32 +39,16 @@ async function fakefetch() {
         ...output.map(e => `<strong>${e[0]}</strong>: ${e[1].replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")}`),
         ...Object.entries(customParams).map(e => `<strong>${e[0]}</strong>: ${e[1]}`) // so i can embed links, etc..
     ]
-    .map((v,x) => `<span>${cachedLogo[x] || " ".repeat(cachedLogo[0].length)}</span>${v}`)
+    .map((v,x) => attachLogo ? `<span>${cachedLogo[x] || " ".repeat(cachedLogo[0].length)}</span>${v}` : v)
     .join("\n")
     
 }
 
 Bun.serve({
     async fetch(req: Request) {
-        
-        const url = new URL(req.url)
         const isMobile = req.headers.get("user-agent")?.includes("iPhone") || req.headers.get("user-agent")?.includes("Android")
 
-        /*
-        if (isMobile) {
-            url.hostname = "old.me.fyle.uk"
-            // someone pleaase tell me how the fuck redirects work in bun
-            // for now i'll just do this LOL
-            return new Response("",{
-                status: 302,
-                headers: {
-                    "Location": url.toString()
-                }
-            })
-        }
-        */
-
-        const fastfetch_output = await fakefetch()
+        const fastfetch_output = await fakefetch(!isMobile)
 
         let res = new Response(
             // can't think of / too lazy to find any other way of doing this
