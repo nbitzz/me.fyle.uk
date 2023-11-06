@@ -32,7 +32,7 @@ async function fakefetch(topDisplay:boolean=false) {
             .stdout
             .split("\n")
             .slice(2)
-            .map(e => e.split(boundary))
+            .map(e => e.replaceAll("\x1b[0m","").split(boundary))
             .filter(e => e.every(a => a) && e[0] != "Terminal") // filters out [ "" ] and Terminal: bun
 
     return [
