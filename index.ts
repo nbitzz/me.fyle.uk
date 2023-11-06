@@ -33,18 +33,14 @@ async function fakefetch() {
             .map(e => e.split(boundary))
             .filter(e => e.every(a => a)) // filters out [ "" ]
 
-    let ff_text = [
+    return [
         "<strong>split</strong>",
         "-----",
         ...output.map(e => `<strong>${e[0]}</strong>: ${e[1].replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")}`),
         ...Object.entries(customParams).map(e => `<strong>${e[0]}</strong>: ${e[1]}`) // so i can embed links, etc..
     ]
-
-    // attach logo
-
-    cachedLogo.forEach((v,x) => ff_text[x] = `<span>${v || " ".repeat(cachedLogo[0].length)}</span>${ff_text[x]??""}`)
-
-    return ff_text.join("\n")
+    .map((v,x) => `<span>${cachedLogo[x] || " ".repeat(cachedLogo[0].length)}</span>${v}`)
+    .join("\n")
     
 }
 
