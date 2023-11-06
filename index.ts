@@ -61,5 +61,7 @@ Bun.serve({
         res.headers.set("content-type","text/html")
         return res
 
-    }
+    },
+
+    port: process.env.PORT ?? 38192
 } as Serve /* bun won't accept this for some reason if i don't do as Serve */)
