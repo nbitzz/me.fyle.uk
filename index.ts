@@ -22,7 +22,7 @@ const customParams = {
 }
 
 async function fakefetch() {
-    const boundary = crypto.randomUUID()
+    const boundary = "=="
 
     // not doing Object.fromEntries() here cause i'd do Object.entries() later anyway
     let output = 
