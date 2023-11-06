@@ -42,7 +42,7 @@ Bun.serve({
         return new Response(
             // can't think of / too lazy to find any other way of doing this
             // without like importing an entire virtual dom
-            cachedFile.replace(/<slot\/>/g, toHtml(neofetch_output))
+            cachedFile.replace(/<slot\/>/g, neofetch_output)
         )
 
     }
