@@ -97,12 +97,13 @@ const server = Bun.serve({
                 )
                 res.headers.set("content-type", "text/html")
                 return res
+            break
             case "/tabs/count":
                 // first, let's try upgrading them to a websocket connection
                 if (server.upgrade(req)) return
 
                 // if they're not willing to connect over ws, let's see what they want to do
-                if (req.method == "GET") return new Response(JSON.stringify(tabInfo)).
+                if (req.method == "GET") return new Response(JSON.stringify(tabInfo), { headers: { "Access-Control-Allow-Origin": "*" } })
                 else if (req.method == "PUT") {
                     // check if their token is correct
                     console.log(req.headers.get("X-Token"))
