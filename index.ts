@@ -36,7 +36,7 @@ Bun.serve({
         }
         */
 
-        const neofetch_output = (await exec_promise(isMobile ? "pfetch" : "fastfetch --logo-type sixel")).stdout
+        const neofetch_output = (await exec_promise(isMobile ? "pfetch" : "fastfetch")).stdout
         console.log(neofetch_output)
 
         let res = new Response(
