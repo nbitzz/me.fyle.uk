@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Tab count</title>
+
+        <style>
+            h1, p, div {
+                font-family: sans-serif
+            }
+            
+            :root {
+                --background: #FFFFFF;
+                --text: #000000;
+                --subtext: #AAAAAA;
+            }
+
+            @media (prefers-color-scheme: dark) {
+                :root {
+                    --background: #000000;
+                    --text: #DDDDDD;
+                }
+            }
+
+            @keyframes blinking_dot {
+                0%   {opacity: 1}
+                100% {opacity: 0}
+            }
+
+            #live_denote {
+                color: var(--text);
+                font-size: 18px;
+                font-weight: 600;
+                display:flex;
+                align-content: center;
+                gap: 5px;
+            }
+
+            #live_denote > * {
+                margin: 0;
+            }
+
+            #live_denote > div {
+                background-color: red;
+                border-radius: 32px;
+                width: 18px;
+                height: 18px;
+                position: relative;
+
+                animation-name: blinking_dot;
+                animation-timing-function: linear;
+                animation-duration: 1s;
+                animation-iteration-count: infinite;
+            }
+        </style>
+    </head>
+    <body>
+        <div>
+            <div id="live_denote">
+                <div></div>
+                LIVE
+            </div>
+        </div>
+    </body>
+</html>
