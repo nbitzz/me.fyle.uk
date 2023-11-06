@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Tab count</title>
+        <title>$tabcount tabs in $windowcount windows</title>
 
         <style>
             h1, p, div {
@@ -93,7 +93,8 @@
         let ld = document.getElementById("live_denote");
 
         let tabcount = document.getElementById("tabCount");
-        let wincount = document.getElementById("tabCount");
+        let wincount = document.getElementById("windowCount");
+        let titleElm = document.getElementsByTagName("title")[0];
 
         function generateSocket() {
             if (socket && socket.readyState != 3) {
@@ -110,6 +111,7 @@
                 let data = JSON.parse(message.data)
                 tabcount.textContent = data.allTabs
                 winCount.textContent = data.allWindows
+                titleElm.text = `${data.allTabs} tabs in ${data.allWindows} windows`
             })
 
             socket.addEventListener("close", () => {
