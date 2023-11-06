@@ -57,7 +57,7 @@ async function fakefetch(topDisplay:boolean=false) {
         ...output.map(e => `<strong>${e[0]}</strong>: ${e[1].replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")}`),
         ...( await Promise.all(
             Array.from(fakeModules.entries())
-            .map(async (e) => `<strong>${e[0]}</strong>: ${e[1]()}`) // so i can embed links, etc..
+            .map(async (e) => `<strong>${e[0]}</strong>: ${await e[1]()}`) // so i can embed links, etc..
         ) ),
         ...Array.from(customParams.entries()).map(e => `<strong>${e[0]}</strong>: ${e[1]}`),
     ]
@@ -102,9 +102,10 @@ const server = Bun.serve({
                 if (server.upgrade(req)) return
 
                 // if they're not willing to connect over ws, let's see what they want to do
-                if (req.method == "GET") return JSON.stringify(tabInfo)
+                if (req.method == "GET") return new Response(JSON.stringify(tabInfo)).
                 else if (req.method == "PUT") {
                     // check if their token is correct
+                    console.log(req.headers.get("X-Token"))
                     if (req.headers.get("X-Token") != process.env.TOKEN) return
 
                     // update tabInfo
@@ -113,6 +114,8 @@ const server = Bun.serve({
                         tabInfo = json
                         listening.forEach(v => v.send(JSON.stringify(tabInfo)))
                     }
+
+                    return new Response("OK", { headers: { "Access-Control-Allow-Origin": "*" } })
                 }
         }
     },
