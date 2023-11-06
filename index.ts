@@ -16,6 +16,8 @@ function exec_promise(input: Parameters<typeof exec>[0]): Promise<{stdout: strin
     })
 }
 
+const fakeModules = new Map<string, () => Promise<string>>()
+
 const customParams = new Map()
     .set("Discord", "@video0.mov")
     .set("GitHub", "<a href=\"https://github.com/nbitzz\">@nbitzz</a>")
@@ -40,7 +42,11 @@ async function fakefetch(topDisplay:boolean=false) {
         "<strong>split</strong>",
         "-----",
         ...output.map(e => `<strong>${e[0]}</strong>: ${e[1].replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")}`),
-        ...Array.from(customParams.entries()).map(e => `<strong>${e[0]}</strong>: ${e[1]}`) // so i can embed links, etc..
+        ...Array.from(customParams.entries()).map(e => `<strong>${e[0]}</strong>: ${e[1]}`), // so i can embed links, etc..
+        ...( await Promise.all(
+            Array.from(fakeModules.entries())
+            .map(async (e) => `<strong>${e[0]}</strong>: ${e[1]()}`)
+        ) )
     ]
     .map((v,x) => !topDisplay ? `<span>${cachedLogo[x] || " ".repeat(cachedLogo[0].length)}</span>${v}` : v)
     .join("\n")
