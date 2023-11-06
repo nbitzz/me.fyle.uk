@@ -42,7 +42,7 @@ async function fakefetch() {
 
     // attach logo
 
-    cachedLogo.forEach((v,x) => ff_text[x] = `<span>${v}</span>${ff_text[x]??""}`)
+    cachedLogo.forEach((v,x) => ff_text[x] = `<span>${v || " ".repeat(cachedLogo[0].length)}</span>${ff_text[x]??""}`)
 
     return ff_text.join("\n")
     
