@@ -19,7 +19,7 @@ function exec_promise(input: Parameters<typeof exec>[0]): Promise<{stdout: strin
 const customParams = new Map()
     .set("Discord", "@video0.mov")
     .set("GitHub", "<a href=\"https://github.com/nbitzz\">@nbitzz</a>")
-    .set("Fediverse", "<a href=\"https://coolviruses.download/@split\">@split@coolviruses.download</a>")
+    .set("Fediverse", "<a rel=\"me\" href=\"https://coolviruses.download/@split\">@split@coolviruses.download</a>")
     .set("Check out my friends at Etcetera", "<a href=\"https://cetera.uk\">cetera.uk</a>")
     .set("and the project I work with them on", "<a href=\"https://github.com/mollersuite/monofile\">monofile</a>")
 
