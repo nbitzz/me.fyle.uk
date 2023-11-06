@@ -36,7 +36,7 @@ Bun.serve({
         }
         */
 
-        const neofetch_output = (await exec_promise(isMobile ? "pfetch" : "fastfetch --load-config neofetch")).stdout
+        const neofetch_output = (await exec_promise("TERM=xterm-256color pfetch")).stdout
         console.log(neofetch_output)
 
         let res = new Response(
