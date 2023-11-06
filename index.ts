@@ -36,13 +36,13 @@ async function fakefetch(topDisplay:boolean=false) {
             .filter(e => e.every(a => a) && e[0] != "Terminal") // filters out [ "" ] and Terminal: bun
 
     return [
-        ...(topDisplay ? cachedLogo : []),
+        ...(topDisplay ? `<span>${cachedLogo.join("\n")}</span>` : ""),
         "<strong>split</strong>",
         "-----",
         ...output.map(e => `<strong>${e[0]}</strong>: ${e[1].replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")}`),
         ...Array.from(customParams.entries()).map(e => `<strong>${e[0]}</strong>: ${e[1]}`) // so i can embed links, etc..
     ]
-    .map((v,x) => topDisplay ? `<span>${cachedLogo[x] || " ".repeat(cachedLogo[0].length)}</span>${v}` : v)
+    .map((v,x) => !topDisplay ? `<span>${cachedLogo[x] || " ".repeat(cachedLogo[0].length)}</span>${v}` : v)
     .join("\n")
     
 }
