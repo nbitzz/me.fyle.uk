@@ -16,10 +16,12 @@ function exec_promise(input: Parameters<typeof exec>[0]): Promise<{stdout: strin
     })
 }
 
-const customParams = {
-    "Discord": "@video0.mov",
-    "Fediverse": "<a href=\"https://coolviruses.download/@split\">@split@coolviruses.download</a>"
-}
+const customParams = new Map()
+    .set("Discord", "@video0.mov")
+    .set("GitHub", "<a href=\"https://github.com/nbitzz\">@nbitzz</a>")
+    .set("Fediverse", "<a href=\"https://coolviruses.download/@split\">@split@coolviruses.download</a>")
+    .set("Check out my friends at Etcetera", "<a href=\"https://cetera.uk\">cetera.uk</a>")
+    .set("and the project I work with them on", "<a href=\"https://github.com/mollersuite/monofile\">monofile</a>")
 
 async function fakefetch(attachLogo:boolean=false) {
     const boundary = "=="
@@ -31,13 +33,13 @@ async function fakefetch(attachLogo:boolean=false) {
             .split("\n")
             .slice(2)
             .map(e => e.split(boundary))
-            .filter(e => e.every(a => a)) // filters out [ "" ]
+            .filter(e => e.every(a => a) && e[0] != "Terminal") // filters out [ "" ] and Terminal: bun
 
     return [
         "<strong>split</strong>",
         "-----",
         ...output.map(e => `<strong>${e[0]}</strong>: ${e[1].replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")}`),
-        ...Object.entries(customParams).map(e => `<strong>${e[0]}</strong>: ${e[1]}`) // so i can embed links, etc..
+        ...Array.from(customParams.entries()).map(e => `<strong>${e[0]}</strong>: ${e[1]}`) // so i can embed links, etc..
     ]
     .map((v,x) => attachLogo ? `<span>${cachedLogo[x] || " ".repeat(cachedLogo[0].length)}</span>${v}` : v)
     .join("\n")
