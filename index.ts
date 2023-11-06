@@ -31,6 +31,7 @@ async function fakefetch() {
             .split("\n")
             .slice(2)
             .map(e => e.split(boundary))
+            .filter(e => e.every(a => a)) // filters out [ "" ]
 
     let ff_text = [
         "<strong>split</strong>",
