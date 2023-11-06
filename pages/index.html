@@ -23,6 +23,10 @@
 
         <!-- lazy so just using a style tag here :) -->
         <style>
+
+            :root {
+                --color: #1CDC97;
+            }
             
             body {
                 background-color: #222;
@@ -36,6 +40,11 @@
                 top:0px;
                 margin:10px;
                 color:white;
+            }
+
+            body > div > pre > strong, 
+            body > div > pre > span {
+                color: --color;
             }
 
         </style>

@@ -1,11 +1,11 @@
 import { Serve } from "bun";
-// this is semi-lazy but that's fine, honestly
 import { exec } from "child_process";
-import AnsiConverter from "ansi-to-html"
 
-const { toHtml } = new AnsiConverter()
+// this is a really, REALLY stupid way of doing this;
+// but it's 0:11 and i'm tired so fuck you, kill yourself
 
-const cachedFile = await Bun.file(`${import.meta.dir}/pages/index.html`).text()
+const cachedIndex = await Bun.file(`${import.meta.dir}/pages/index.html`).text()
+const cachedLogo  = (await Bun.file(`${import.meta.dir}/assets/logo.txt`).text()).split("\n")
 
 function exec_promise(input: Parameters<typeof exec>[0]): Promise<{stdout: string, stderr: string}> {
     return new Promise((resolve, reject) => {
@@ -14,6 +14,37 @@ function exec_promise(input: Parameters<typeof exec>[0]): Promise<{stdout: strin
             else resolve({stdout, stderr})
         })
     })
+}
+
+const customParams = {
+    "Discord": "@video0.mov",
+    "Fediverse": "<a href=\"https://coolviruses.download/@split\">@split@coolviruses.download</a>"
+}
+
+async function fakefetch() {
+    const boundary = crypto.randomUUID()
+
+    // not doing Object.fromEntries() here cause i'd do Object.entries() later anyway
+    let output = 
+        (await exec_promise(`fastfetch --separator ${boundary}`))
+            .stdout
+            .split("\n")
+            .slice(2)
+            .map(e => e.split(boundary))
+
+    let ff_text = [
+        "<strong>split</strong>",
+        "-----",
+        ...output.map(e => `<strong>${e[0]}</strong>: ${e[1].replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")}`),
+        ...Object.entries(customParams).map(e => `<strong>${e[0]}</strong>: ${e[1]}`) // so i can embed links, etc..
+    ]
+
+    // attach logo
+
+    cachedLogo.forEach((v,x) => ff_text[x] = `<span>${v}</span>${ff_text[x]??""}`)
+
+    return ff_text.join("\n")
+    
 }
 
 Bun.serve({
@@ -36,13 +67,12 @@ Bun.serve({
         }
         */
 
-        const neofetch_output = (await exec_promise("TERM=xterm-256color pfetch")).stdout
-        console.log(neofetch_output)
+        const fastfetch_output = await fakefetch()
 
         let res = new Response(
             // can't think of / too lazy to find any other way of doing this
             // without like importing an entire virtual dom
-            cachedFile.replace(/<slot\/>/g, neofetch_output)
+            cachedIndex.replace(/<slot\/>/g, fastfetch_output)
         )
         
         res.headers.set("content-type","text/html")
