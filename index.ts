@@ -36,7 +36,7 @@ async function fakefetch(topDisplay:boolean=false) {
             .filter(e => e.every(a => a) && e[0] != "Terminal") // filters out [ "" ] and Terminal: bun
 
     return [
-        ...(topDisplay ? `<span>${cachedLogo.join("\n")}</span>` : ""),
+        (topDisplay ? `<span>${cachedLogo.join("\n")}</span>` : ""),
         "<strong>split</strong>",
         "-----",
         ...output.map(e => `<strong>${e[0]}</strong>: ${e[1].replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")}`),
