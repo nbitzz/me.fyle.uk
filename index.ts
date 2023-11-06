@@ -36,10 +36,13 @@ Bun.serve({
         }
         */
 
+        const neofetch_output = (await exec_promise(isMobile ? "pfetch" : "fastfetch")).stdout
+        console.log(neofetch_output)
+
         return new Response(
             // can't think of / too lazy to find any other way of doing this
             // without like importing an entire virtual dom
-            cachedFile.replace(/<slot\/>/g, toHtml((await exec_promise(isMobile ? "pfetch" : "fastfetch")).stdout))
+            cachedFile.replace(/<slot\/>/g, toHtml(neofetch_output))
         )
 
     }
