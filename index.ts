@@ -1,11 +1,17 @@
-import { Serve } from "bun";
+import type { Serve, ServerWebSocket } from "bun";
 import { exec } from "child_process";
 
 // this is a really, REALLY stupid way of doing this;
 // but it's 0:11 and i'm tired so fuck you, kill yourself
 
+// since this site only hosts the homepage and tab count
+// i don't believe i really need a http lib with handlers and such yet
+// so this is still fine i think
 const cachedIndex = await Bun.file(`${import.meta.dir}/pages/index.html`).text()
 const cachedLogo  = (await Bun.file(`${import.meta.dir}/assets/logo.txt`).text()).split("\n")
+const cachedTabsPage = await Bun.file(`${import.meta.dir}/pages/tabs.html`).text()
+
+let tabInfo: {allWindows: string, allTabs: string} = {allWindows: "?", allTabs: "?"}
 
 function exec_promise(input: Parameters<typeof exec>[0]): Promise<{stdout: string, stderr: string}> {
     return new Promise((resolve, reject) => {
@@ -17,6 +23,7 @@ function exec_promise(input: Parameters<typeof exec>[0]): Promise<{stdout: strin
 }
 
 const fakeModules = new Map<string, () => Promise<string>>()
+    .set("Tabs", async () => `<a href="/tabs">${tabInfo.allTabs}</a>`)
 
 const customParams = new Map()
     .set("Discord", "@video0.mov")
@@ -53,20 +60,67 @@ async function fakefetch(topDisplay:boolean=false) {
     
 }
 
-Bun.serve({
+let listening: ServerWebSocket[] = []
+
+const server = Bun.serve({
     async fetch(req: Request) {
+    
+        const url = new URL(req.url)
         const isMobile = req.headers.get("user-agent")?.includes("iPhone") || req.headers.get("user-agent")?.includes("Android")
 
-        const fastfetch_output = await fakefetch(isMobile)
+        let res: Response
 
-        let res = new Response(
-            // can't think of / too lazy to find any other way of doing this
-            // without like importing an entire virtual dom
-            cachedIndex.replace(/<slot\/>/g, fastfetch_output)
-        )
-        
-        res.headers.set("content-type","text/html")
-        return res
+        switch(url.pathname) {
+            case "/":
+                const fastfetch_output = await fakefetch(isMobile)
+
+                res = new Response(
+                    // can't think of / too lazy to find any other way of doing this
+                    // without like importing an entire virtual dom
+                    cachedIndex.replace(/<slot\/>/g, fastfetch_output)
+                )
+                
+                res.headers.set("content-type","text/html")
+                return res
+            break
+            case "/tabs":
+                res = new Response(
+                    cachedTabsPage
+                        .replaceAll("$tabcount", tabInfo.allTabs)
+                        .replaceAll("$windowcount", tabInfo.allWindows)
+                )
+                res.headers.set("content-type", "text/html")
+                return res
+            case "/tabs/count":
+                // first, let's try upgrading them to a websocket connection
+                if (server.upgrade(req)) return
+
+                // if they're not willing to connect over ws, let's see what they want to do
+                if (req.method == "GET") return JSON.stringify(tabInfo)
+                else if (req.method == "PUT") {
+                    // check if their token is correct
+                    if (req.headers.get("X-Token") != process.env.TOKEN) return
+
+                    // update tabInfo
+                    let json = (await req.json().catch(e => null)) as typeof tabInfo | null
+                    if (json) {
+                        tabInfo = json
+                        listening.forEach(v => v.send(JSON.stringify(tabInfo)))
+                    }
+                }
+        }
+    },
+
+    websocket: {
+
+        open(ws) {
+            ws.send(JSON.stringify(tabInfo))
+            listening.push(ws)
+        },
+
+        close(ws) {
+            listening.splice(listening.indexOf(ws), 1)
+        }
 
     },
 

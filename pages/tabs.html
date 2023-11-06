@@ -7,7 +7,8 @@
 
         <style>
             h1, p, div {
-                font-family: sans-serif
+                font-family: sans-serif;
+                text-align: center;
             }
             
             :root {
@@ -28,6 +29,10 @@
                 100% {opacity: 0}
             }
 
+            body {
+                background-color:var(--background);
+            }
+
             #live_denote {
                 color: var(--text);
                 font-size: 18px;
@@ -35,6 +40,13 @@
                 display:flex;
                 align-content: center;
                 gap: 5px;
+            }
+
+            body > div {
+                position:absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%,-50%);
             }
 
             #live_denote > * {
@@ -53,6 +65,14 @@
                 animation-duration: 1s;
                 animation-iteration-count: infinite;
             }
+
+            h1 {
+                color: var(--text)
+            }
+
+            p {
+                color: var(--subtext)
+            }
         </style>
     </head>
     <body>
@@ -61,6 +81,8 @@
                 <div></div>
                 LIVE
             </div>
+            <h1><slot id="tabCount">$tabcount</slot></h1>
+            <p>across <slot id="windowCount">$windowcount</slot> windows</p>
         </div>
     </body>
 </html>
