@@ -26,7 +26,7 @@ const fakeModules = new Map<string, () => Promise<string>>()
     // stupid way of doing it but it's funny lol
     .set("Age", async () => `${
         new Date(
-            Date.now()-new Date(`20091110T0000Z`).valueOf()
+            Date.now()-new Date(`2009-11-10T00:00Z`).valueOf()
         ).getUTCFullYear()
     } years old (2009-11-10)`)
     .set("Tabs", async () => `<a href="/tabs">${tabInfo.allTabs}</a>`)
