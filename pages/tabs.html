@@ -75,14 +75,48 @@
             }
         </style>
     </head>
+
     <body>
         <div>
-            <div id="live_denote">
+            <div id="live_denote" style="display:none;">
                 <div></div>
                 LIVE
             </div>
             <h1><slot id="tabCount">$tabcount</slot></h1>
-            <p>across <slot id="windowCount">$windowcount</slot> windows</p>
+            <p>tabs across <slot id="windowCount">$windowcount</slot> windows</p>
         </div>
     </body>
+
+    <script>
+
+        let socket;
+        let ld = document.getElementById("live_denote");
+
+        let tabcount = document.getElementById("tabCount");
+        let wincount = document.getElementById("tabCount");
+
+        function generateSocket() {
+            if (socket && socket.readyState != 3) {
+                socket.close();
+            }
+
+            socket = new WebSocket("/tabs/count")
+
+            socket.addEventListener("open", () => {
+                ld.style.display = "block";
+            })
+
+            socket.addEventListener("message", (message) => {
+                let data = JSON.parse(message.data)
+                tabcount.textContent = data.allTabs
+                winCount.textContent = data.allWindows
+            })
+
+            socket.addEventListener("close", () => {
+                ld.style.display = "none"
+                generateSocket()
+            })
+        }
+
+    </script>
 </html>
