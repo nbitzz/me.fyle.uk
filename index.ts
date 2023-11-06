@@ -51,7 +51,7 @@ Bun.serve({
     async fetch(req: Request) {
         const isMobile = req.headers.get("user-agent")?.includes("iPhone") || req.headers.get("user-agent")?.includes("Android")
 
-        const fastfetch_output = await fakefetch(!isMobile)
+        const fastfetch_output = await fakefetch(isMobile)
 
         let res = new Response(
             // can't think of / too lazy to find any other way of doing this
