@@ -39,6 +39,7 @@
                 font-weight: 600;
                 display:flex;
                 align-content: center;
+                justify-content: center;
                 gap: 5px;
             }
 
@@ -80,7 +81,7 @@
         <div>
             <div id="live_denote" style="display:none;">
                 <div></div>
-                LIVE
+                <span>LIVE</span>
             </div>
             <h1><slot id="tabCount">$tabcount</slot></h1>
             <p>tabs across <slot id="windowCount">$windowcount</slot> windows</p>
@@ -101,10 +102,10 @@
                 socket.close();
             }
 
-            socket = new WebSocket("/tabs/count")
+            socket = new WebSocket("wss://me.fyle.uk/tabs/count")
 
             socket.addEventListener("open", () => {
-                ld.style.display = "block";
+                ld.style.display = "flex";
             })
 
             socket.addEventListener("message", (message) => {
