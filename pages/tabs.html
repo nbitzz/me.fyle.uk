@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -111,7 +111,7 @@
             socket.addEventListener("message", (message) => {
                 let data = JSON.parse(message.data)
                 tabcount.textContent = data.allTabs
-                winCount.textContent = data.allWindows
+                wincount.textContent = data.allWindows
                 titleElm.text = `${data.allTabs} tabs in ${data.allWindows} windows`
             })
 
