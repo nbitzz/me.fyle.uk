@@ -76,7 +76,7 @@ const server = Bun.serve({
 
         let res: Response
 
-        switch(url.pathname) {
+        switch(url.pathname.replace(/\/+$/,"")) {
             case "/":
                 const fastfetch_output = await fakefetch(isMobile)
 
@@ -106,7 +106,6 @@ const server = Bun.serve({
                 if (req.method == "GET") return new Response(JSON.stringify(tabInfo), { headers: { "Access-Control-Allow-Origin": "*" } })
                 else if (req.method == "PUT") {
                     // check if their token is correct
-                    console.log(req.headers.get("X-Token"))
                     if (req.headers.get("X-Token") != process.env.TOKEN) return
 
                     // update tabInfo
