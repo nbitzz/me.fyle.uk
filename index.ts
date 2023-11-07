@@ -126,7 +126,7 @@ const server = Bun.serve({
                 )
                 
                 res.headers.set("content-type","text/html")
-                res.status = 404
+                res.status(404)
                 return res
             break
         }
