@@ -120,13 +120,11 @@ const server = Bun.serve({
             break;
             default:
                 res = new Response(
-                    // can't think of / too lazy to find any other way of doing this
-                    // without like importing an entire virtual dom
-                    cachedIndex.replace(/<slot\/>/g, `<strong>404!</strong> path not found`)
+                    cachedIndex.replace(/<slot\/>/g, `<strong>404!</strong> path not found`),
+                    {status: 404}
                 )
                 
                 res.headers.set("content-type","text/html")
-                res.status(404)
                 return res
             break
         }
