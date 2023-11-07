@@ -9,6 +9,7 @@
             h1, p, div {
                 font-family: sans-serif;
                 text-align: center;
+                margin: 0;
             }
             
             :root {
@@ -68,7 +69,8 @@
             }
 
             h1 {
-                color: var(--text)
+                color: var(--text);
+                font-size: 50px;
             }
 
             p {
@@ -112,7 +114,7 @@
                 let data = JSON.parse(message.data)
                 tabcount.textContent = data.allTabs
                 wincount.textContent = data.allWindows
-                titleElm.text = `${data.allTabs} tabs in ${data.allWindows} windows`
+                titleElm.innerHTML = `${data.allTabs} tabs in ${data.allWindows} windows`
             })
 
             socket.addEventListener("close", () => {
