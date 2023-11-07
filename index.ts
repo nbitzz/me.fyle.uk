@@ -77,7 +77,7 @@ const server = Bun.serve({
         let res: Response
 
         switch(url.pathname.replace(/\/+$/,"")) {
-            case "/":
+            case "":
                 const fastfetch_output = await fakefetch(isMobile)
 
                 res = new Response(
@@ -117,6 +117,18 @@ const server = Bun.serve({
 
                     return new Response("OK", { headers: { "Access-Control-Allow-Origin": "*" } })
                 }
+            break;
+            default:
+                res = new Response(
+                    // can't think of / too lazy to find any other way of doing this
+                    // without like importing an entire virtual dom
+                    cachedIndex.replace(/<slot\/>/g, `<strong>404!</strong> path not found`)
+                )
+                
+                res.headers.set("content-type","text/html")
+                res.status = 404
+                return res
+            break
         }
     },
 
