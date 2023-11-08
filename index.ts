@@ -32,7 +32,7 @@ const fakeModules = new Map<string, () => Promise<string>>()
     .set("Tabs", async () => `<a href="/tabs">${tabInfo.allTabs}</a>`)
 
 const customParams = new Map()
-    .set("Discord", "@video0.mov")
+    .set("Discord", "<a href=\"https://discord.com/users/312700896343621633\">@video0.mov</a>")
     .set("GitHub", "<a href=\"https://github.com/nbitzz\">@nbitzz</a>")
     .set("Firefish", "<a rel=\"me\" href=\"https://coolviruses.download/@split\">@split@coolviruses.download</a>")
     .set("Check out my friends at Etcetera", "<a href=\"https://cetera.uk\">cetera.uk</a>")
