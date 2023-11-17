@@ -30,6 +30,15 @@ const fakeModules = new Map<string, () => Promise<string>>()
         ).getUTCFullYear()-1970
     } years old (2009-11-10)`)
     .set("Tabs", async () => `<a href="/tabs">${tabInfo.allTabs}</a>`)
+    .set("WPM (60s)", async () => {
+        let pb = await fetch("https://api.monkeytype.com/users/personalBests?mode=time&mode2=60", {
+            headers: {
+                Authorization: `ApeKey ${process.env.apekey}`
+            }
+        }).json()
+            
+        return `<a href="https://monkeytype.com/profile/split1337">${pb.wpm} (${pb.acc}% acc, raw ${pb.raw})</a> on ${new Date(pb.timestamp).toISOString().split("T")[0]}`
+    })
 
 const customParams = new Map()
     .set("Discord", "<a href=\"https://discord.com/users/312700896343621633\">@video0.mov</a>")
@@ -57,7 +66,7 @@ async function fakefetch(topDisplay:boolean=false) {
         ...output.map(e => `<strong>${e[0]}</strong>: ${e[1].replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")}`),
         ...( await Promise.all(
             Array.from(fakeModules.entries())
-            .map(async (e) => `<strong>${e[0]}</strong>: ${await e[1]()}`) // so i can embed links, etc..
+            .map(async (e) => `<strong>${e[0]}</strong>: ${await e[1]().catch(e => "[error]")}`) // so i can embed links, etc..
         ) ),
         ...Array.from(customParams.entries()).map(e => `<strong>${e[0]}</strong>: ${e[1]}`),
     ]
