@@ -35,7 +35,7 @@ const fakeModules = new Map<string, () => Promise<string>>()
             headers: {
                 Authorization: `ApeKey ${process.env.apekey}`
             }
-        })).json()).data
+        })).json()).data[0]
             
         return `<a href="https://monkeytype.com/profile/split1337">${pb.wpm} (${pb.acc}% acc, raw ${pb.raw})</a> on ${new Date(pb.timestamp).toISOString().split("T")[0]}`
     })
