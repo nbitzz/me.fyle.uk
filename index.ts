@@ -66,7 +66,7 @@ async function fakefetch(topDisplay:boolean=false) {
         ...output.map(e => `<strong>${e[0]}</strong>: ${e[1].replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")}`),
         ...( await Promise.all(
             Array.from(fakeModules.entries())
-            .map(async (e) => `<strong>${e[0]}</strong>: ${await e[1]().catch(e => "[error]")}`) // so i can embed links, etc..
+            .map(async (e) => `<strong>${e[0]}</strong>: ${await e[1]().catch(e => { console.error(e); return "[error]" })}`) // so i can embed links, etc..
         ) ),
         ...Array.from(customParams.entries()).map(e => `<strong>${e[0]}</strong>: ${e[1]}`),
     ]
