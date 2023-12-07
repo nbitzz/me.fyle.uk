@@ -23,12 +23,6 @@ function exec_promise(input: Parameters<typeof exec>[0]): Promise<{stdout: strin
 }
 
 const fakeModules = new Map<string, () => Promise<string>>()
-    // stupid way of doing it but it's funny lol
-    .set("Age", async () => `${
-        new Date(
-            Date.now()-new Date(`2009-11-10T00:00Z`).valueOf()
-        ).getUTCFullYear()-1970
-    } years old (2009-11-10)`)
     .set("Tabs", async () => `<a href="/tabs">${tabInfo.allTabs}</a>`)
     .set("WPM (60s)", async () => {
         let pb = (await (await fetch("https://api.monkeytype.com/users/personalBests?mode=time&mode2=60", {
