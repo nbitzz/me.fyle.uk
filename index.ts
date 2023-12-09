@@ -14,11 +14,13 @@ const cachedTabsPage = await Bun.file(`${import.meta.dir}/pages/tabs.html`).text
 
 type Device = keyof typeof cfg.devices
 
+type DeviceStatus = {
+    allWindows: number,
+    allTabs: number
+}
+
 type DeviceTabkeeper = {
-    [x in Device]: {
-        allWindows: number,
-        allTabs: number
-    }
+    [x in Device]: DeviceStatus
 }
 
 let tabInfo = Object.fromEntries(
@@ -125,12 +127,13 @@ const server = Bun.serve({
                 if (req.method == "GET") return new Response(JSON.stringify(tabInfo), { headers: { "Access-Control-Allow-Origin": "*" } })
                 else if (req.method == "PUT") {
                     // check if their token is correct
-                    if (req.headers.get("X-Token") != process.env.TOKEN) return
+                    if (!Object.values(cfg.devices).find(e => e == req.headers.get("X-Token"))) return
 
                     // update tabInfo
-                    let json = (await req.json().catch(e => null)) as typeof tabInfo | null
+                    let json = (await req.json().catch(e => null)) as DeviceStatus | null
                     if (json) {
-                        tabInfo = json
+                        // Horrible
+                        tabInfo[Object.entries(cfg.devices).find(e => e[1] == req.headers.get("X-Token"))?.[0] as Device] = json
                         listening.forEach(v => v.send(JSON.stringify(tabInfo)))
                     }
 
