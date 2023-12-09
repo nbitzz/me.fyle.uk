@@ -24,7 +24,7 @@ type DeviceTabkeeper = {
 }
 
 let tabInfo = Object.fromEntries(
-    Object.keys(cfg).map((device) => [device, {allWindows: 0, allTabs: 0}])
+    Object.keys(cfg.devices).map((device) => [device, {allWindows: 0, allTabs: 0}])
 ) as DeviceTabkeeper
 
 function exec_promise(input: Parameters<typeof exec>[0]): Promise<{stdout: string, stderr: string}> {
