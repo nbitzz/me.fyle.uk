@@ -1,5 +1,6 @@
 import type { Serve, ServerWebSocket } from "bun";
 import { exec } from "child_process";
+import cfg from "./config.json"
 
 // this is a really, REALLY stupid way of doing this;
 // but it's 0:11 and i'm tired so fuck you, kill yourself
@@ -11,7 +12,18 @@ const cachedIndex = await Bun.file(`${import.meta.dir}/pages/index.html`).text()
 const cachedLogo  = (await Bun.file(`${import.meta.dir}/assets/logo.txt`).text()).split("\n")
 const cachedTabsPage = await Bun.file(`${import.meta.dir}/pages/tabs.html`).text()
 
-let tabInfo: {allWindows: string, allTabs: string} = {allWindows: "?", allTabs: "?"}
+type Device = keyof typeof cfg.devices
+
+type DeviceTabkeeper = {
+    [x in Device]: {
+        allWindows: number,
+        allTabs: number
+    }
+}
+
+let tabInfo = Object.fromEntries(
+    Object.keys(cfg).map((device) => [device, {allWindows: 0, allTabs: 0}])
+) as DeviceTabkeeper
 
 function exec_promise(input: Parameters<typeof exec>[0]): Promise<{stdout: string, stderr: string}> {
     return new Promise((resolve, reject) => {
@@ -23,7 +35,7 @@ function exec_promise(input: Parameters<typeof exec>[0]): Promise<{stdout: strin
 }
 
 const fakeModules = new Map<string, () => Promise<string>>()
-    .set("Tabs", async () => `<a href="/tabs">${tabInfo.allTabs}</a>`)
+    .set("Tabs", async () => `<a href="/tabs">${tabInfo.desktop.allTabs || "?"}</a> (${Object.values(tabInfo).reduce((a,b) => a + b.allTabs, 0)} across all devices)`)
     .set("WPM (60s)", async () => {
         let pb = (await (await fetch("https://api.monkeytype.com/users/personalBests?mode=time&mode2=60", {
             headers: {
@@ -95,8 +107,12 @@ const server = Bun.serve({
             case "/tabs":
                 res = new Response(
                     cachedTabsPage
-                        .replaceAll("$tabcount", tabInfo.allTabs)
-                        .replaceAll("$windowcount", tabInfo.allWindows)
+                        .replaceAll("$tabcount", Object.values(tabInfo).reduce((a,b) => a + b.allTabs, 0).toString())
+                        .replaceAll("$windowcount", Object.values(tabInfo).reduce((a,b) => a + b.allWindows, 0).toString())
+                        .replaceAll("$otherdevices", Object.entries(tabInfo).map(([x,v]) => 
+                            `<strong>${x}:</strong> <slot id="${x}.tabCount">${v.allTabs}</slot> tabs open`
+                            + ` in <slot id="${x}.windowCount">${v.allWindows}</slot> windows`
+                        ).join("<br>"))
                 )
                 res.headers.set("content-type", "text/html")
                 return res

@@ -6,7 +6,7 @@
         <title>$tabcount tabs in $windowcount windows</title>
 
         <style>
-            h1, p, div {
+            h1, p, div, details {
                 font-family: sans-serif;
                 text-align: center;
                 margin: 0;
@@ -73,7 +73,7 @@
                 font-size: 50px;
             }
 
-            p {
+            p, details {
                 color: var(--subtext)
             }
         </style>
@@ -86,7 +86,9 @@
                 <span>LIVE</span>
             </div>
             <h1><slot id="tabCount">$tabcount</slot></h1>
-            <p>tabs across <slot id="windowCount">$windowcount</slot> windows</p>
+            <details>
+                <summary>tabs across <slot id="windowCount">$windowcount</slot> windows</p></summary>
+                $otherdevices
         </div>
     </body>
 
@@ -112,9 +114,22 @@
 
             socket.addEventListener("message", (message) => {
                 let data = JSON.parse(message.data)
-                tabcount.textContent = data.allTabs
-                wincount.textContent = data.allWindows
-                titleElm.innerHTML = `${data.allTabs} tabs in ${data.allWindows} windows`
+
+                // total tabs and window count
+
+                let allTabs = Object.values(data).reduce((a, b) => a + b.allTabs, 0)
+                let allWindows = Object.values(data).reduce((a, b) => a + b.allWindows, 0)
+
+                tabcount.textContent = allTabs || "?"
+                wincount.textContent = allWindows || "?"
+                titleElm.innerHTML = `${allTabs || "?"} tabs in ${allWindows || "?"} windows`
+
+                // other
+
+                Object.entries(data).forEach(([device, info]) => {
+                    document.getElementById(`${device}.tabCount`).textContent = info.allTabs || "?"
+                    document.getElementById(`${device}.windowCount`).textContent = info.allWindows || "?"
+                })
             })
 
             socket.addEventListener("close", () => {
