@@ -109,11 +109,11 @@ const server = Bun.serve({
             case "/tabs":
                 res = new Response(
                     cachedTabsPage
-                        .replaceAll("$tabcount", Object.values(tabInfo).reduce((a,b) => a + b.allTabs, 0).toString())
-                        .replaceAll("$windowcount", Object.values(tabInfo).reduce((a,b) => a + b.allWindows, 0).toString())
+                        .replaceAll("$tabcount", (Object.values(tabInfo).reduce((a,b) => a + b.allTabs, 0) || "?").toString())
+                        .replaceAll("$windowcount", (Object.values(tabInfo).reduce((a,b) => a + b.allWindows, 0) || "?").toString())
                         .replaceAll("$otherdevices", Object.entries(tabInfo).map(([x,v]) => 
                             `<strong>${x}:</strong> <slot id="${x}.tabCount">${v.allTabs}</slot> tabs open`
-                            + ` in <slot id="${x}.windowCount">${v.allWindows}</slot> windows`
+                            + ` in <slot id="${x}.windowCount">${v.allWindows}</slot> window(s)`
                         ).join("<br>"))
                 )
                 res.headers.set("content-type", "text/html")
@@ -130,10 +130,17 @@ const server = Bun.serve({
                     if (!Object.values(cfg.devices).find(e => e == req.headers.get("X-Token"))) return
 
                     // update tabInfo
-                    let json = (await req.json().catch(e => null)) as DeviceStatus | null
+                    let json = (await req.json().catch(e => null))
                     if (json) {
                         // Horrible
-                        tabInfo[Object.entries(cfg.devices).find(e => e[1] == req.headers.get("X-Token"))?.[0] as Device] = json
+                        tabInfo[
+                            Object.entries(cfg.devices)
+                                .find(e => e[1] == req.headers.get("X-Token"))
+                                ?.[0] as Device
+                        ] = {
+                            allTabs: parseInt(json.allTabs, 10),
+                            allWindows: parseInt(json.allWindows, 10)
+                        }
                         listening.forEach(v => v.send(JSON.stringify(tabInfo)))
                     }
 
