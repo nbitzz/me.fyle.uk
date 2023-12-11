@@ -76,6 +76,23 @@
             p, details {
                 color: var(--subtext)
             }
+
+            summary {
+                border-bottom: 1px solid var(--background);
+                transition-duration: 200ms;
+                transition-property: border-bottom;
+                cursor: pointer;
+            }
+
+            summary:hover {
+                border-bottom: 1px solid var(--subtext);
+                transition-duration: 200ms;
+                transition-property: border-bottom;
+            }
+
+            summary::marker {
+                content: "";
+            }
         </style>
     </head>
 
