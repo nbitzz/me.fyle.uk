@@ -1,2 +1,2 @@
 # me.fyle.uk
-Hey, here's my about page, I guess.
+old website; superseded by [split.pet](https://split.pet)
